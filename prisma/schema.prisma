@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+enum Area {
+  LAVORO
+  CASA
+}
+
+enum Tipo {
+  ENTRATA
+  USCITA
+}
+
+enum Periodo {
+  ONE_SHOT
+  MENSILE
+  BIMESTRALE
+  ANNUALE
+}
+
+model Categoria {
+  id   String @id @default(cuid())
+  slug String @unique
+  nome String
+  area Area
+  tipo Tipo
+  voci Voce[]
+}
+
+model Voce {
+  id                String    @id @default(cuid())
+  categoria         Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+  categoriaId       String
+  nome              String
+  importo           Decimal   @db.Decimal(12, 2)
+  periodo           Periodo
+  dataInizio        DateTime
+  prossimoRinnovo   DateTime?
+  rinnovoAutomatico Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+
+  @@index([categoriaId])
+}
+
+model Impostazioni {
+  id              String   @id @default("singleton")
+  pinHash         String
+  saldoIniziale   Decimal  @default(0) @db.Decimal(12, 2)
+  dataAttivazione DateTime @default(now())
+}
