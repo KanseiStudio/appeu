@@ -3,6 +3,7 @@ import Gauge from "@/components/Gauge";
 import AlertRinnovi from "@/components/AlertRinnovi";
 import { getDashboard, getAlertRinnovi } from "@/lib/data";
 import { logoutAction } from "@/app/actions/auth";
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [d, alert] = await Promise.all([getDashboard(), getAlertRinnovi(3)]);

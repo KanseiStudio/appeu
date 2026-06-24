@@ -3,12 +3,14 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { creaVoce, eliminaVoce } from "@/app/actions/voci";
 import { totaleMese, type VoceCalc, type Periodo, type Tipo } from "@/lib/calc";
+import EliminaCategoria from "@/components/EliminaCategoria";
+import { eliminaCategoria } from "@/app/actions/categorie";
 
 const eur = (n: number) => n.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 const periodoLabel: Record<string, string> = {
   ONE_SHOT: "Una tantum", MENSILE: "Mensile", BIMESTRALE: "Bimestrale", ANNUALE: "Annuale",
 };
-
+export const dynamic = "force-dynamic";
 export default async function CategoriaPage({
   params,
 }: {

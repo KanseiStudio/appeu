@@ -61,8 +61,10 @@ export async function getCategorieConTotali() {
         totale: totaleMese(voci, c.tipo as Tipo, oggi),
       };
     })
-    .sort((a, b) => ORDINE.indexOf(a.slug) - ORDINE.indexOf(b.slug));
-
+.sort((a, b) => {
+      const ia = ORDINE.indexOf(a.slug), ib = ORDINE.indexOf(b.slug);
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib) || a.nome.localeCompare(b.nome);
+    });
   return {
     lavoro: conTotali.filter((c) => c.area === "LAVORO"),
     casa: conTotali.filter((c) => c.area === "CASA"),
