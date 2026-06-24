@@ -2,15 +2,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { creaVoce, eliminaVoce } from "@/app/actions/voci";
-import { totaleMese, type VoceCalc, type Periodo, type Tipo } from "@/lib/calc";
-import EliminaCategoria from "@/components/EliminaCategoria";
 import { eliminaCategoria } from "@/app/actions/categorie";
+import { totaleMese, type VoceCalc, type Periodo, type Tipo } from "@/lib/calc";
+import ConfirmDeleteForm from "@/components/ConfirmDeleteForm";
 
 const eur = (n: number) => n.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
 const periodoLabel: Record<string, string> = {
   ONE_SHOT: "Una tantum", MENSILE: "Mensile", BIMESTRALE: "Bimestrale", ANNUALE: "Annuale",
 };
 export const dynamic = "force-dynamic";
+
 export default async function CategoriaPage({
   params,
 }: {
@@ -62,7 +63,7 @@ export default async function CategoriaPage({
         <label className="flex items-center gap-2 text-sm text-gray-400">
           <input type="checkbox" name="rinnovoAutomatico" /> Rinnovo automatico
         </label>
-        <button className="w-full bg-black text-white border rounded-lg py-2">Aggiungi</button>
+        <button type="submit" className="w-full bg-black text-white border rounded-lg py-2">Aggiungi</button>
       </form>
 
       <div className="flex justify-between items-center px-1">
@@ -82,15 +83,25 @@ export default async function CategoriaPage({
             </div>
             <div className="flex items-center gap-3">
               <span className="font-medium">{eur(Number(v.importo))}</span>
-              <form action={eliminaVoce}>
-                <input type="hidden" name="id" value={v.id} />
-                <input type="hidden" name="slug" value={cat.slug} />
-                <button className="text-xs text-red-500">Elimina</button>
-              </form>
+              <ConfirmDeleteForm
+                action={eliminaVoce}
+                hidden={{ id: v.id, slug: cat.slug }}
+                message={`Eliminare "${v.nome}"?`}
+              />
             </div>
           </div>
         ))}
       </section>
+
+      <div className="pt-4 border-t">
+        <ConfirmDeleteForm
+          action={eliminaCategoria}
+          hidden={{ slug: cat.slug }}
+          label="Elimina categoria"
+          triggerClassName="w-full text-center text-sm text-red-500 border border-red-300 rounded-xl py-3"
+          message={`Eliminare la categoria "${cat.nome}" e tutte le sue voci?`}
+        />
+      </div>
     </main>
   );
 }

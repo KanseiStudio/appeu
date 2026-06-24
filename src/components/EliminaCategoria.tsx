@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getCategorieConTotali } from "@/lib/data";
 import { creaCategoria } from "@/app/actions/categorie";
-
+import SoundButton from "@/components/SoundButton";
 export const dynamic = "force-dynamic";
 
 const eur = (n: number) => n.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
@@ -39,7 +39,7 @@ function Sezione({
           <option value="USCITA">Uscita</option>
           <option value="ENTRATA">Entrata</option>
         </select>
-        <button className="border rounded-lg px-3 py-2 text-sm">+</button>
+        <SoundButton className="border rounded-lg px-3 py-2 text-sm">+</SoundButton>
       </form>
     </section>
   );

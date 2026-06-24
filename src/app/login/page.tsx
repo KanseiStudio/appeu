@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { loginAction } from "@/app/actions/auth";
-
+import SoundButton from "@/components/SoundButton";
 export default async function LoginPage({
   searchParams,
 }: {
@@ -19,7 +19,7 @@ export default async function LoginPage({
         {error && <p className="text-sm text-red-600">PIN errato.</p>}
         <input name="pin" type="password" inputMode="numeric" placeholder="PIN"
           className="w-full border rounded-lg px-3 py-2" required autoFocus />
-        <button type="submit" className="w-full bg-black text-white rounded-lg py-2">Entra</button>
+        <SoundButton className="w-full bg-black text-white rounded-lg py-2">Entra</SoundButton>
       </form>
     </main>
   );

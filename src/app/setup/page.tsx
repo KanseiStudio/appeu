@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { setupAction } from "@/app/actions/auth";
-
+import SoundButton from "@/components/SoundButton";
 export default async function SetupPage({
   searchParams,
 }: {
@@ -29,7 +29,7 @@ export default async function SetupPage({
           className="w-full border rounded-lg px-3 py-2" required />
         <input name="saldoIniziale" type="text" inputMode="decimal" placeholder="Saldo iniziale (€)"
           className="w-full border rounded-lg px-3 py-2" required />
-        <button type="submit" className="w-full bg-black text-white rounded-lg py-2">Avvia</button>
+        <SoundButton className="w-full bg-black text-white rounded-lg py-2">Avvia</SoundButton>
       </form>
     </main>
   );
