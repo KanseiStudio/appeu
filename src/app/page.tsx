@@ -1,10 +1,11 @@
 import Link from "next/link";
 import Gauge from "@/components/Gauge";
-import { getDashboard } from "@/lib/data";
+import AlertRinnovi from "@/components/AlertRinnovi";
+import { getDashboard, getAlertRinnovi } from "@/lib/data";
 import { logoutAction } from "@/app/actions/auth";
 
 export default async function Home() {
-  const d = await getDashboard();
+  const [d, alert] = await Promise.all([getDashboard(), getAlertRinnovi(3)]);
   const scala = Math.max(d.saldoIniziale, Math.abs(d.saldo)) || 1;
 
   const eur = (n: number) => n.toLocaleString("it-IT", { style: "currency", currency: "EUR" });
@@ -18,6 +19,8 @@ export default async function Home() {
           <button className="text-xs text-gray-400">Esci</button>
         </form>
       </header>
+
+      <AlertRinnovi alert={alert} />
 
       <Gauge value={d.saldo} scale={scala} />
 

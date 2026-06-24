@@ -1,7 +1,7 @@
-import { subMonths } from "date-fns";
+import { subMonths, differenceInCalendarDays } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import {
-  saldoConto, totaleMese, variazionePerc,
+  saldoConto, totaleMese, variazionePerc, prossimoRinnovo,
   type VoceCalc, type Periodo, type Tipo,
 } from "@/lib/calc";
 
@@ -67,4 +67,33 @@ export async function getCategorieConTotali() {
     lavoro: conTotali.filter((c) => c.area === "LAVORO"),
     casa: conTotali.filter((c) => c.area === "CASA"),
   };
+}
+
+export async function getAlertRinnovi(giorni = 3) {
+  const oggi = new Date();
+  const vociDb = await prisma.voce.findMany({ include: { categoria: true } });
+
+  return vociDb
+    .map((v) => {
+      const calcV: VoceCalc = {
+        importo: Number(v.importo),
+        periodo: v.periodo as Periodo,
+        dataInizio: v.dataInizio,
+        tipo: v.categoria.tipo as Tipo,
+      };
+      const prossimo = prossimoRinnovo(calcV, oggi);
+      if (!prossimo) return null;
+      const giorniMancanti = differenceInCalendarDays(prossimo, oggi);
+      if (giorniMancanti < 0 || giorniMancanti > giorni) return null;
+      return {
+        id: v.id,
+        nome: v.nome,
+        categoria: v.categoria.nome,
+        importo: Number(v.importo),
+        giorniMancanti,
+        automatico: v.rinnovoAutomatico,
+      };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null)
+    .sort((a, b) => a.giorniMancanti - b.giorniMancanti);
 }
